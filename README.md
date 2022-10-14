@@ -24,5 +24,6 @@ Dependencies:
 - Xarray
 - Obspy
 - tqdm
+- dask
 
 ** pip install should install them automatically.
