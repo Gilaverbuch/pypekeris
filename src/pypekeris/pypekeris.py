@@ -24,26 +24,25 @@ plt.rcParams['figure.facecolor'] = 'white'
 import numpy as np
 import pandas as pd
 
-from obspy import read_inventory, read, UTCDateTime, Stream, Trace
-from .input.input import read_header, read_waveforms
-from .output.output import save2mseed_
+from .io.io import pekeris_
 
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
-def read_data(file_name, records_range, bit='24bit', sensitivity=170, gain=20):
+def pekeris(c0=1500,  c1=1500,  c2=2000, d=1000, f=1, nq=1e3):
     '''
-    This function teads the data from a .D 16 or 24 bit binary file
+    This function initializes the pekeris problem
 
 
     parameters
     ----------
-        file_name: path to file
-        records_range: range of record sections to extact
-        bit: type of binry file. Can get: '24bit', and '16bit'. Default is for 24. Still need to add the pseudo 24 bit.
-        sensitivity: default is 170. optional to set to different value or specify it per channel
-        gain: default sensor gain is 20
+        c0 = reference velocity. default 1500 m/s
+        c1 = velocity layer 1. default 1500 m/s
+        c2 = velocity layer 2. default 2000 m/s
+        d  = depth of layer 1. default 1000 m
+        f = frequency. default is 1 Hz
+        nq = number of wavenumbers. default is 1e3
 
     Returns
     -------
@@ -53,50 +52,15 @@ def read_data(file_name, records_range, bit='24bit', sensitivity=170, gain=20):
     '''
 
 
-    
-    Header = read_header(file_name)
-    Waveforms = read_waveforms(file_name, Header, records_range, bit, sensitivity, gain)
+    P = pekeris_(c0,  c1,  c2, d, f, nq)
 
 
 
 
-    return Header, Waveforms
-
-# -------------------------------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------------------
+    return P
 
 
 
-
-
-
-
-
-
-
-
-# -------------------------------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------------------
-
-def save2mseed(waveforms, dir_name='./Results/'):
-    '''
-    This function teads the data from a .D 24 bit binary file
-
-
-    parameters
-    ----------
-        waveforms: obspy strem 
-        dir_name: directory to save the data to in a year/network/station structure. 
-                  default directory is /Results/
-
-    Returns
-    -------
-    Nothing
-
-
-    '''
-
-    save2mseed_(waveforms, dir_name)
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
