@@ -29,7 +29,7 @@ import pandas as pd
 # -------------------------------------------------------------------------------------------------
 
 class pekeris_():
-    def __init__(self,zs, zr, r, c0,  c1,  c2, d, f, nq):
+    def __init__(self,zs, zr, r, c0,  c1,  c2, d, dz, f, nq):
         '''
         This function initializes the pekeris class
 
@@ -65,7 +65,7 @@ class pekeris_():
         #                    }
 
         # self.parameters = pd.DataFrame(parameters)
-        
+
         self.zs = zs
         self.zr = zr
         self.r = r
@@ -73,6 +73,7 @@ class pekeris_():
         self.c1 = c1
         self.c2 = c2
         self.d  = d 
+        self.dz = 1
         self.freq = f
         self.nq = nq
 
@@ -84,7 +85,6 @@ class pekeris_():
         '''
         This function calculates the parameters needed for the computations
         '''
-
         self.omega = 2*np.pi*self.freq #angular frequency
         self.k0 = self.omega/self.c0 # reference wavenumber
         self.k1 = self.c0/self.c1 # dimentionless wavenumber layer 1
@@ -96,7 +96,11 @@ class pekeris_():
         self._mu2 = 1j*self._mu2_abs
         self._mu_func = -self._mu2_abs/self._mu1 
         self._cot_func = 1/np.tan(self.k0*self._mu1*self.d)
+
         self._idx = np.argwhere(np.diff(np.sign(self._mu_func - self._cot_func))).flatten()
+        self._idx = self._idx[self._cot_func[self._idx]<=10]
+
+        self._z = np.arange(0, self.d, self.dz)
 
 # -------------------------------------------------------------------------------------------------
 
@@ -118,8 +122,12 @@ class pekeris_():
         '''
 
         plt.figure(figsize = (10,5))
-        plt.plot(self.k1, 0, 'k.')
-        plt.plot(self.k2, 0, 'k.')
+        plt.plot(self.k1, 0, 'k.', markersize=8)
+        plt.plot(self.k2, 0, 'k.', markersize=8)
+        plt.vlines(self.k1, -10, 10 , colors='k', linestyles='dashed')
+        plt.vlines(self.k2, -10, 10 , colors='k', linestyles='dashed')
+        plt.annotate('k1', [self.k1, 0])
+        plt.annotate('k2', [self.k2, 0])
         plt.plot(self._q, self._mu_func, 'k')
         plt.plot(self._q, self._cot_func, 'k.')
         plt.plot(self._q[self._idx], self._cot_func[self._idx], 'ro')
@@ -127,6 +135,32 @@ class pekeris_():
         plt.title('Intersections of $\cot (k_0 \mu_1 d)$ and $-|\mu_2|/\mu_1$. Discrete eigenvalues')
         plt.xlabel('Non-dimensional horizontal wavenumber')
         plt.ylabel('Amplitude')
+        plt.show()
+
+# -------------------------------------------------------------------------------------------------
+
+
+    def _plot_modes_shape(self):
+        '''
+        This function plots the shapes of the modes.
+        '''
+
+        plt.figure(figsize=(4,6))
+        l = len(self._idx)
+        for idx in range(0, l,1): 
+            phi_1 = (2*self.k0*self._mu2_abs[self._idx[idx]])
+            phi_2 = (1 + self.k0*self.d*self._mu2_abs[self._idx[idx]])
+            phi_3 = np.sin(self.k0*self._mu1[self._idx[idx]]*self._z)
+            phi_i = np.sqrt(phi_1/phi_2)*phi_3
+            
+
+            plt.plot(phi_i, self._z, label='mode ' + str(l-idx))
+
+        plt.gca().invert_yaxis()
+        plt.ylabel('Depth [m]')
+        plt.xlabel('Amplitude')
+        plt.title('Modes shape')
+        plt.legend(bbox_to_anchor=(1, 1))
         plt.show()
 
 # -------------------------------------------------------------------------------------------------
