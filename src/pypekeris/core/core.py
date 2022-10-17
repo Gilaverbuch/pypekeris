@@ -29,7 +29,7 @@ import pandas as pd
 # -------------------------------------------------------------------------------------------------
 
 class pekeris_():
-    def __init__(self,zs, zr, r, c0,  c1,  c2, d, dz, f, nq):
+    def __init__(self,zs, zr, r, dr, c0,  c1,  c2, d, dz, f, nq):
         '''
         This function initializes the pekeris class
 
@@ -39,6 +39,7 @@ class pekeris_():
         zs = source depth. default 100 m
         zr = receiver depth, default 100m
         r  = receiver range, default 5000m
+        dr = range interval, default 10 m
         c0 = reference velocity, default 1500 m/s
         c1 = velocity layer 1, default 1500 m/s
         c2 = velocity layer 2, default 2000 m/s
@@ -69,6 +70,7 @@ class pekeris_():
         self.zs = zs
         self.zr = zr
         self.r = r
+        self.dr = dr
         self.c0 = c0
         self.c1 = c1
         self.c2 = c2
@@ -101,6 +103,7 @@ class pekeris_():
         self._idx = self._idx[self._cot_func[self._idx]<=10]
 
         self._z = np.arange(0, self.d, self.dz)
+        self._r = np.arange(self.dr, self.r, self.dr)
 
 # -------------------------------------------------------------------------------------------------
 
@@ -159,9 +162,83 @@ class pekeris_():
         plt.gca().invert_yaxis()
         plt.ylabel('Depth [m]')
         plt.xlabel('Amplitude')
-        plt.title('Modes shape')
+        plt.title('Modes shape for f=%d' %self.freq)
         plt.legend(bbox_to_anchor=(1, 1))
         plt.show()
 
 # -------------------------------------------------------------------------------------------------
+
+
+    def _calc_field(self):
+        '''
+        This function plots the shapes of the modes.
+        '''
+
+        Phi = np.zeros((self._z.size, self._r.size), dtype=np.complex64)
+        l = len(self._idx)
+        for idx in range(0, l,1):
+            for z in range(0, self._z.size):
+                H = np.sqrt(2/(np.pi * self.k0 * self._q[self._idx[idx]] * self._r)) \
+                    * np.exp(1j*(self.k0 * self._q[self._idx[idx]] * self._r - np.pi/4))     
+
+                phi_1 = (2*self.k0*self._mu2_abs[self._idx[idx]])
+                phi_2 = (1 + self.k0*self.d*self._mu2_abs[self._idx[idx]])
+                phi_3i = np.sin(self.k0*self._mu1[self._idx[idx]]*self._z[z])
+                phi_i = np.sqrt(phi_1/phi_2)*phi_3i
+                phi_3s = np.sin(self.k0*self._mu1[self._idx[idx]]*self.zs)
+                phi_s = np.sqrt(phi_1/phi_2)*phi_3s
+
+                Phi[z,:]+= (1j/4)*(H * phi_i * phi_s)
+            
+        self.Phi = Phi   
+
+
+# -------------------------------------------------------------------------------------------------
+
+    def _plot_TL(self):
+        '''
+        This function plots the shapes of the modes.
+        '''
+
+        plt.figure(figsize=(10, 5))
+        plt.pcolormesh(self._r, self._z, 20*np.log10(np.abs(self.Phi)))
+        plt.colorbar()
+        plt.gca().invert_yaxis()
+        plt.ylabel('Depth [m]')
+        plt.xlabel('Range [m]')
+        plt.title('TL for f=%d'%self.freq)
+        plt.show()
+
+# -------------------------------------------------------------------------------------------------
+
+    def _plot_disperssion(self, fmin=1, fmax=50, df=0.5):
+        '''
+        This function plots the modal disperssion relation.
+        '''
+
+        frequency = np.arange(fmin, fmax, df)
+
+        c_phase = []
+        k_r = []
+        f_k_r = []
+        for f_idx, f in enumerate(frequency):
+            self.freq = f
+            self._calc_parameters()
+            
+            for modes in range(0, self._idx.size):
+                c_phase.append(2*np.pi*f/(self.k0*self._q[self._idx[modes]]))
+                k_r.append(self._q[self._idx[modes]])
+                f_k_r.append(f)
+                
+        k_r = np.asarray(k_r, dtype=np.float32)
+        f_k_R = np.asarray(f_k_r, dtype=np.float32)
+        c_phase = np.asarray(c_phase, dtype=np.float32)
+
+        plt.figure(figsize=(5,5))
+        plt.plot(c_phase, f_k_R, 'k.')
+        plt.title('Modal disperssion relation')
+        plt.ylabel('Frequency [Hz]')
+        plt.xlabel('Phase velocity [m/s]')
+        plt.show()
+
 

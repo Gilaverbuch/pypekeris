@@ -30,7 +30,7 @@ from .core.core import pekeris_
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
-def pekeris(zs=100, zr=100, r=5000, c0=1500,  c1=1500,  c2=2000, d=1000, dz=1, f=1, nq=1e3):
+def pekeris(zs=100, zr=100, r=5000, dr=10, c0=1500,  c1=1500,  c2=2000, d=1000, dz=1, f=1, nq=1e3):
     '''
     This function initializes the pekeris problem
 
@@ -40,6 +40,7 @@ def pekeris(zs=100, zr=100, r=5000, c0=1500,  c1=1500,  c2=2000, d=1000, dz=1, f
         zs = source depth. default 100 m
         zr = receiver depth, default 100m
         r  = receiver range, default 5000m
+        dr = range interval, default 10 m
         c0 = reference velocity, default 1500 m/s
         c1 = velocity layer 1, default 1500 m/s
         c2 = velocity layer 2, default 2000 m/s
@@ -56,7 +57,7 @@ def pekeris(zs=100, zr=100, r=5000, c0=1500,  c1=1500,  c2=2000, d=1000, dz=1, f
     '''
 
 
-    P = pekeris_(zs, zr, r, c0,  c1,  c2, d, dz, f, nq)
+    P = pekeris_(zs, zr, r, dr, c0,  c1,  c2, d, dz, f, nq)
 
 
 
