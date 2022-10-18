@@ -169,29 +169,57 @@ class pekeris_():
 # -------------------------------------------------------------------------------------------------
 
 
-    def _calc_field(self):
+    def _calc_2D_field(self):
         '''
         This function plots the shapes of the modes.
         '''
 
         Phi = np.zeros((self._z.size, self._r.size), dtype=np.complex64)
-        l = len(self._idx)
-        for idx in range(0, l,1):
-            for z in range(0, self._z.size):
-                H = np.sqrt(2/(np.pi * self.k0 * self._q[self._idx[idx]] * self._r)) \
-                    * np.exp(1j*(self.k0 * self._q[self._idx[idx]] * self._r - np.pi/4))     
+        l = self._idx.size
+        if l>=1:
+            for idx in range(0, l,1):
+                for z in range(0, self._z.size):
+                    H = np.sqrt(2/(np.pi * self.k0 * self._q[self._idx[idx]] * self._r)) \
+                        * np.exp(1j*(self.k0 * self._q[self._idx[idx]] * self._r - np.pi/4))     
 
-                phi_1 = (2*self.k0*self._mu2_abs[self._idx[idx]])
-                phi_2 = (1 + self.k0*self.d*self._mu2_abs[self._idx[idx]])
-                phi_3i = np.sin(self.k0*self._mu1[self._idx[idx]]*self._z[z])
-                phi_i = np.sqrt(phi_1/phi_2)*phi_3i
-                phi_3s = np.sin(self.k0*self._mu1[self._idx[idx]]*self.zs)
-                phi_s = np.sqrt(phi_1/phi_2)*phi_3s
+                    phi_1 = (2*self.k0*self._mu2_abs[self._idx[idx]])
+                    phi_2 = (1 + self.k0*self.d*self._mu2_abs[self._idx[idx]])
+                    phi_3i = np.sin(self.k0*self._mu1[self._idx[idx]]*self._z[z])
+                    phi_i = np.sqrt(phi_1/phi_2)*phi_3i
+                    phi_3s = np.sin(self.k0*self._mu1[self._idx[idx]]*self.zs)
+                    phi_s = np.sqrt(phi_1/phi_2)*phi_3s
 
-                Phi[z,:]+= (1j/4)*(H * phi_i * phi_s)
+                    Phi[z,:]+= (1j/4)*(H * phi_i * phi_s)
             
-        self.Phi = Phi   
+        self.Phi_2D = Phi   
 
+# -------------------------------------------------------------------------------------------------
+
+
+    def _calc_field(self, r_rec=10000, z_rec=100, num_mode=1):
+        '''
+        This function plots the shapes of the modes.
+        '''
+
+        Phi = 0
+        l = self._idx.size
+        if l>=1:
+            num_mode = np.min([l,num_mode])
+            for idx in range(l-1, l-1-num_mode,-1):
+                H = np.sqrt(2/(np.pi * self.k0 * self._q[self._idx[idx]] * r_rec)) \
+                    * np.exp(1j*(self.k0 * self._q[self._idx[idx]] * r_rec - np.pi/4))     
+
+                phi_1 = (2 * self.k0 * self._mu2_abs[self._idx[idx]])
+                phi_2 = (1 + self.k0 * self.d * self._mu2_abs[self._idx[idx]])
+                phi_3i = np.sin(self.k0 * self._mu1[self._idx[idx]] * z_rec)
+                phi_i = np.sqrt(phi_1/phi_2) * phi_3i
+
+                phi_3s = np.sin(self.k0 * self._mu1[self._idx[idx]] * self.zs)
+                phi_s = np.sqrt(phi_1/phi_2) * phi_3s
+
+                Phi+= (1j/4) * (H * phi_i * phi_s)
+            
+        self.Phi = Phi 
 
 # -------------------------------------------------------------------------------------------------
 
@@ -200,8 +228,9 @@ class pekeris_():
         This function plots the shapes of the modes.
         '''
 
-        plt.figure(figsize=(10, 5))
-        plt.pcolormesh(self._r, self._z, 20*np.log10(np.abs(self.Phi)))
+        p_ref = np.exp(1j * self.k0 * 1)/(4 * np.pi * 1)
+        plt.figure(figsize=(15, 5))
+        plt.pcolormesh(self._r, self._z, 20*np.log10(np.abs(self.Phi_2D)/np.abs(p_ref)))
         plt.colorbar()
         plt.gca().invert_yaxis()
         plt.ylabel('Depth [m]')
