@@ -36,15 +36,16 @@ class pekeris_():
 
         parameters
         ----------
-        zs = source depth. default 100 m
-        zr = receiver depth, default 100m
+        zs = source depth. default 10 m
+        zr = receiver depth, default 10m
         r  = receiver range, default 5000m
         dr = range interval, default 10 m
         c0 = reference velocity, default 1500 m/s
         c1 = velocity layer 1, default 1500 m/s
         c2 = velocity layer 2, default 2000 m/s
-        d  = depth of layer 1, default 1000 m
-        f  = frequency, default is 1 Hz
+        d  = depth of layer 1, default 50 m
+        dz = depth interval, default 0.5 m
+        f  = frequency, default is 50 Hz
         nq = number of wavenumbers, default is 1e3
 
         Returns
@@ -240,7 +241,7 @@ class pekeris_():
 
 # -------------------------------------------------------------------------------------------------
 
-    def _plot_disperssion(self, fmin=1, fmax=50, df=0.5):
+    def _plot_dispersion(self, fmin=1, fmax=50, df=0.5):
         '''
         This function plots the modal disperssion relation.
         '''
@@ -265,7 +266,7 @@ class pekeris_():
 
         plt.figure(figsize=(5,5))
         plt.plot(c_phase, f_k_R, 'k.')
-        plt.title('Modal disperssion relation')
+        plt.title('Dispersion relation')
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Phase velocity [m/s]')
         plt.show()
