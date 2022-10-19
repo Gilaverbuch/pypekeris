@@ -163,7 +163,7 @@ class pekeris_():
         plt.gca().invert_yaxis()
         plt.ylabel('Depth [m]')
         plt.xlabel('Amplitude')
-        plt.title('Modes shape for f=%d' %self.freq)
+        plt.title('Modes shape for %d Hz' %self.freq)
         plt.legend(bbox_to_anchor=(1, 1))
         plt.show()
 
@@ -232,11 +232,11 @@ class pekeris_():
         p_ref = np.exp(1j * self.k0 * 1)/(4 * np.pi * 1)
         plt.figure(figsize=(15, 5))
         plt.pcolormesh(self._r, self._z, 20*np.log10(np.abs(self.Phi_2D)/np.abs(p_ref)))
-        plt.colorbar()
         plt.gca().invert_yaxis()
         plt.ylabel('Depth [m]')
         plt.xlabel('Range [m]')
-        plt.title('TL for f=%d'%self.freq)
+        plt.title('TL for %d Hz'%self.freq)
+        plt.colorbar(label='TL [dB]')
         plt.show()
 
 # -------------------------------------------------------------------------------------------------
