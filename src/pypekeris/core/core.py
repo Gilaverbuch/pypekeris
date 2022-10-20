@@ -55,19 +55,6 @@ class pekeris_():
         Waveforms: Obspy Stream object
         '''
 
-        # parameters = {
-        #             'zs' : [zs],
-        #             'zr' : [zr],
-        #             'r'  : [r],
-        #             'c0' : [c0],
-        #             'c1' : [c1],
-        #             'c2' : [c2],
-        #             'd'  : [d],
-        #             'freq' : [f],
-        #             'nq' : [nq]
-        #                    }
-
-        # self.parameters = pd.DataFrame(parameters)
 
         self.zs = zs
         self.zr = zr
