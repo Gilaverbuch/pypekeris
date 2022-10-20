@@ -23,6 +23,7 @@ plt.rcParams['figure.facecolor'] = 'white'
 
 import numpy as np
 import pandas as pd
+import copy
 
 
 # -------------------------------------------------------------------------------------------------
@@ -136,7 +137,7 @@ class pekeris_():
         plt.plot(self._q, self._cot_func, 'k.')
         plt.plot(self._q[self._idx], self._cot_func[self._idx], 'ro')
         plt.ylim(-10,10)
-        plt.title('Intersections of $\cot (k_0 \mu_1 d)$ and $-|\mu_2|/\mu_1$. Discrete eigenvalues')
+        plt.title('Intersections of $\cot (k_0 \mu_1 d)$ and $-|\mu_2|/\mu_1$ -> Discrete spectrum.')
         plt.xlabel('Non-dimensional horizontal wavenumber')
         plt.ylabel('Amplitude')
         plt.show()
@@ -245,30 +246,122 @@ class pekeris_():
         '''
         This function plots the modal disperssion relation.
         '''
-
-        frequency = np.arange(fmin, fmax, df)
+        nq_org = self.nq
+        f_org = self.freq
+        frequency = np.arange(fmin, fmax, 0.5)
 
         c_phase = []
         k_r = []
         f_k_r = []
+        mode = []
         for f_idx, f in enumerate(frequency):
             self.freq = f
             self._calc_parameters()
-            
-            for modes in range(0, self._idx.size):
-                c_phase.append(2*np.pi*f/(self.k0*self._q[self._idx[modes]]))
-                k_r.append(self._q[self._idx[modes]])
-                f_k_r.append(f)
-                
-        k_r = np.asarray(k_r, dtype=np.float32)
-        f_k_R = np.asarray(f_k_r, dtype=np.float32)
-        c_phase = np.asarray(c_phase, dtype=np.float32)
 
-        plt.figure(figsize=(5,5))
-        plt.plot(c_phase, f_k_R, 'k.')
-        plt.title('Dispersion relation')
-        plt.ylabel('Frequency [Hz]')
-        plt.xlabel('Phase velocity [m/s]')
+            if self._idx.size>=1:
+
+                for m_idx, modes in enumerate(range(self._idx.size-1, -1, -1)):
+                    c_phase.append(2*np.pi*f/(self.k0*self._q[self._idx[modes]]))
+                    k_r.append(self.k0*self._q[self._idx[modes]])
+                    f_k_r.append(f)
+                    mode.append(m_idx)
+
+        k_r = np.asarray(k_r, dtype=np.float64)
+        f_k_r = np.asarray(f_k_r, dtype=np.float32)
+        c_phase = np.asarray(c_phase, dtype=np.float32)
+        mode = np.asarray(mode, dtype=np.int32)
+
+        mode_num = np.arange(0, np.max(mode)+1, 1)
+
+        fig, (ax1, ax2) = plt.subplots(ncols=2, sharey=True, figsize=(10,5))
+
+        ax1.vlines(self.c1, fmin, fmax, colors='gray', linestyles='dashed')
+        ax2.vlines(self.c1, fmin, fmax, colors='gray', linestyles='dashed')
+        for m in mode_num:
+            
+            f_temp = f_k_r[mode==m]
+            k_r_temp = k_r[mode==m]
+            c_phase_temp = c_phase[mode==m]
+            
+            ax1.plot(c_phase_temp, f_temp, 'k')
+            
+            c_group = []
+            f_group = []
+            
+            for i in range(1, f_temp.size-1, 1):
+                
+                
+                delta_kr = k_r_temp[i+1] - k_r_temp[i-1]
+                if delta_kr>0:
+                    delta_f = f_temp[i+1] - f_temp[i-1]
+                    v_g = 2*np.pi*delta_f/delta_kr
+                    
+                    c_group.append(v_g)
+                    f_group.append(f_temp[i])
+                    
+                    
+            ax2.plot(c_group, f_group, 'k')
+
+        ax1.set_ylim(0, fmax)
+        ax1.set_title('Dispersion relation')
+        ax2.set_title('Modal group velocity')
+        ax1.set_ylabel('Frequency [Hz]')
+        ax1.set_xlabel('Phase velocity [m/s]')
+        ax2.set_xlabel('Group velocity [m/s]')
         plt.show()
 
+        self.freq = f_org
+        self.nq = nq_org
+        self._calc_parameters()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def _plot_dispersion(self, fmin=1, fmax=50, df=0.5):
+#     '''
+#     This function plots the modal disperssion relation.
+#     '''
+
+#     frequency = np.arange(fmin, fmax, df)
+
+#     c_phase = []
+#     k_r = []
+#     f_k_r = []
+#     for f_idx, f in enumerate(frequency):
+#         self.freq = f
+#         self._calc_parameters()
+
+#         if self._idx.size>=1:
+        
+#             for modes in range(self._idx.size-1, -1, -1):
+#                 c_phase.append(2*np.pi*f/(self.k0*self._q[self._idx[modes]]))
+#                 k_r.append(self._q[self._idx[modes]])
+#                 f_k_r.append(f)
+            
+#     k_r = np.asarray(k_r, dtype=np.float32)
+#     f_k_r = np.asarray(f_k_r, dtype=np.float32)
+#     c_phase = np.asarray(c_phase, dtype=np.float32)
+
+#     plt.figure(figsize=(5,5))
+#     plt.plot(c_phase, f_k_r, 'k.')
+#     plt.title('Dispersion relation')
+#     plt.ylabel('Frequency [Hz]')
+#     plt.xlabel('Phase velocity [m/s]')
+#     plt.show()
