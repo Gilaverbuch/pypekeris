@@ -8,7 +8,7 @@ In a conda environment run:
 
 - conda install dask
 
-- pip install build (A simple, correct PEP 517 build frontend. It will build the .whl and .tar.gz for the pip install)
+- pip install build 
 
 cd to the package directory and run:
 
