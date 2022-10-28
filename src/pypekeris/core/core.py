@@ -94,6 +94,7 @@ class pekeris_():
         self._z = np.arange(0, self.d, self.dz)
         self._r = np.arange(self.dr, self.r, self.dr)
 
+
 # -------------------------------------------------------------------------------------------------
 
     def _print_parameters(self):
@@ -104,6 +105,7 @@ class pekeris_():
         for attr, value in self.__dict__.items():
             if not attr.startswith('_'):
                     print(attr, value)
+
 
     
 # -------------------------------------------------------------------------------------------------
@@ -182,6 +184,7 @@ class pekeris_():
             
         self.Phi_2D = Phi   
 
+
 # -------------------------------------------------------------------------------------------------
 
 
@@ -209,6 +212,7 @@ class pekeris_():
                 Phi+= (1j/4) * (H * phi_i * phi_s)
             
         self.Phi = Phi 
+
 
 # -------------------------------------------------------------------------------------------------
 
@@ -300,6 +304,7 @@ class pekeris_():
         self.freq = f_org
         self.nq = nq_org
         self._calc_parameters()
+
 
 
 

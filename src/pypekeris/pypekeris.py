@@ -74,7 +74,7 @@ def pekeris(zs=10, zr=10, r=5000, dr=10, c0=1500,  c1=1500,  c2=2000, d=50, dz=0
 
 
 
-def pekeris_broadband(t0=3, t_max=50, fmin=1e1, fmax=1e2, dt=1e-3, zs=5, zr=5, r=1e4, d=20, num_mode=3):
+def pekeris_broadband(t0=3, t_max=50, fmin=1e1, fmax=1e2, dt=1e-3, zs=5, zr=5, r=1e4, d=20, num_mode=3, c1=1500, c2=2000 ):
     '''
     This function is based on the Pekeris class, and conputes the broadband signal in a Pekeris waveguide.
     
@@ -90,6 +90,8 @@ def pekeris_broadband(t0=3, t_max=50, fmin=1e1, fmax=1e2, dt=1e-3, zs=5, zr=5, r
         r = receiver distance, default is 1e4 m
         d = waveguide depth, default is 20 m
         num_mode = number of modes to compute, default is 3
+        c1 = velocity layer 1, default 1500 m/s
+        c2 = velocity layer 2, default 2000 m/s
     '''
     
     l=int(t_max/dt)
@@ -123,9 +125,12 @@ def pekeris_broadband(t0=3, t_max=50, fmin=1e1, fmax=1e2, dt=1e-3, zs=5, zr=5, r
 
     pressure = np.zeros(frequency.size, dtype=np.complex64)
 
-    fmax_idx = int(frequency.size/2)
-    for idx, f in enumerate(tqdm(frequency[1:fmax_idx])):
-        P = pekeris(f=f, nq=5e4, dr=1, zs=1, d=20)
+    fmin_idx = (np.abs(frequency - fmin*0.5)).argmin()
+    fmax_idx = (np.abs(frequency - fmax*1.5)).argmin()
+    
+
+    for idx, f in enumerate(tqdm(frequency[fmin_idx:fmax_idx])):
+        P = pekeris(f=f, nq=5e4, dr=1, zs=1, d=20, c1=c1, c2=c2)
         P._calc_parameters()
         P._calc_field(r_rec=r, z_rec=zr, num_mode=num_mode)
         pressure[idx] = P.Phi*freq_ref[idx]
