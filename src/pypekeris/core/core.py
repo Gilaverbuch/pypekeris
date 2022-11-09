@@ -134,7 +134,7 @@ class pekeris_():
 # -------------------------------------------------------------------------------------------------
 
 
-    def _plot_modes_shape(self):
+    def _plot_modes_shape(self, num_of_modes=5):
         '''
         This function plots the shapes of the modes.
         '''
