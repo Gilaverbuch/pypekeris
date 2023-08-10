@@ -1,0 +1,16 @@
+# .yml file to create the pysst environment
+
+name: pypekeris
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python
+  - dask
+  - pip
+  - pip:
+    - build
+
+
+
