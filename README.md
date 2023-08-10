@@ -2,13 +2,14 @@
 A python solver for acoustic propagation in a Pekeris waveguide.
 
 
-In a conda environment run:
 
-- conda install python 
+In a terminal  run:
 
-- conda install dask
+- conda env create -f pypekeris.yml
 
-- pip install build 
+This command will create the pysst environment. Then run:
+
+- conda activate pypekeris
 
 cd to the package directory and run:
 

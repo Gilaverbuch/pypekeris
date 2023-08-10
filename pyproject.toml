@@ -17,4 +17,5 @@ dependencies = [
     'pandas',
     'obspy',
     'tqdm',
+    'bokeh=3.2.0'
 ]
