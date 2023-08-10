@@ -10,12 +10,12 @@ dependencies = [
     "requests",
     'importlib-metadata; python_version>"3.8"',
     'matplotlib',
-    'notebook',
+    'notebook==6.5.4',
     'numpy',
     'xarray',
     'geopy',
     'pandas',
     'obspy',
     'tqdm',
-    'bokeh=3.2.0'
+    'bokeh==3.2.0'
 ]
