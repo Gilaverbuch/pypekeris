@@ -74,7 +74,7 @@ def pekeris(zs=10, zr=10, r=5000, dr=10, c0=1500,  c1=1500,  c2=2000, d=50, dz=0
 
 
 
-def pekeris_broadband(t0=3, t_max=50, fmin=1e1, fmax=1e2, dt=1e-3, zs=5, zr=5, r=1e4, d=20, num_mode=3, c1=1500, c2=2000 ):
+def pekeris_broadband(t0=3, t_max=50, fmin=1e1, fmax=1e2, dt=1e-3, zs=5, zr=5, r=1e4, d=20, num_mode=3, c1=1500, c2=2000, date_time='now' ):
     '''
     This function is based on the Pekeris class, and conputes the broadband signal in a Pekeris waveguide.
     
@@ -107,7 +107,10 @@ def pekeris_broadband(t0=3, t_max=50, fmin=1e1, fmax=1e2, dt=1e-3, zs=5, zr=5, r
     tr_s.stats.network = 'Signal'
     tr_s.stats.station = 'src'
     tr_s.stats.channel = 'FDH' # 
-    tr_s.stats.starttime = UTCDateTime.now()
+    if date_time=='now':
+        tr_s.stats.starttime = UTCDateTime.now()
+    else:
+        tr_s.stats.starttime = UTCDateTime(date_time)
     tr_s.stats.sampling_rate = 1/dt
     tr_s.stats.delta = dt
     tr_s.stats.npts = time.size
@@ -131,7 +134,7 @@ def pekeris_broadband(t0=3, t_max=50, fmin=1e1, fmax=1e2, dt=1e-3, zs=5, zr=5, r
     
 
     for idx, f in enumerate(tqdm(frequency[fmin_idx:fmax_idx])):
-        P = pekeris(f=f, nq=5e4, dr=1, zs=1, d=20, c1=c1, c2=c2)
+        P = pekeris(f=f, nq=5e4, dr=1, zs=zs, d=20, c1=c1, c2=c2)
         P.calc_parameters()
         P.calc_field(r_rec=r, z_rec=zr, num_mode=num_mode)
         pressure[idx] = P.Phi*freq_ref[idx]
