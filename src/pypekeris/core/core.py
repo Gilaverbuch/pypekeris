@@ -72,7 +72,7 @@ class pekeris_():
 
 
 # -------------------------------------------------------------------------------------------------
-    def _calc_parameters(self):
+    def calc_parameters(self):
         '''
         This function calculates the parameters needed for the computations
         '''
@@ -97,7 +97,7 @@ class pekeris_():
 
 # -------------------------------------------------------------------------------------------------
 
-    def _print_parameters(self):
+    def print_parameters(self):
         '''
         This function prints the single parameters used for the calculations
         '''
@@ -110,7 +110,7 @@ class pekeris_():
     
 # -------------------------------------------------------------------------------------------------
 
-    def _plot_discrete_modes(self):
+    def plot_discrete_modes(self):
         '''
         This function plots the _cot_func, _mu_func, and their intersection points
         '''
@@ -134,7 +134,7 @@ class pekeris_():
 # -------------------------------------------------------------------------------------------------
 
 
-    def _plot_modes_shape(self, num_of_modes=5):
+    def plot_modes_shape(self, num_of_modes=5):
         '''
         This function plots the shapes of the modes.
         '''
@@ -160,7 +160,7 @@ class pekeris_():
 # -------------------------------------------------------------------------------------------------
 
 
-    def _calc_2D_field(self):
+    def calc_2D_field(self):
         '''
         This function plots the shapes of the modes.
         '''
@@ -188,7 +188,7 @@ class pekeris_():
 # -------------------------------------------------------------------------------------------------
 
 
-    def _calc_field(self, r_rec=10000, z_rec=100, num_mode=1):
+    def calc_field(self, r_rec=10000, z_rec=100, num_mode=1):
         '''
         This function plots the shapes of the modes.
         '''
@@ -216,7 +216,7 @@ class pekeris_():
 
 # -------------------------------------------------------------------------------------------------
 
-    def _plot_TL(self):
+    def plot_TL(self):
         '''
         This function plots the shapes of the modes.
         '''
@@ -233,7 +233,7 @@ class pekeris_():
 
 # -------------------------------------------------------------------------------------------------
 
-    def _plot_dispersion(self, fmin=1, fmax=50, df=0.5):
+    def plot_dispersion(self, fmin=1, fmax=50, df=0.5):
         '''
         This function plots the modal disperssion relation.
         '''
@@ -247,7 +247,7 @@ class pekeris_():
         mode = []
         for f_idx, f in enumerate(frequency):
             self.freq = f
-            self._calc_parameters()
+            self.calc_parameters()
 
             if self._idx.size>=1:
 
@@ -303,57 +303,9 @@ class pekeris_():
 
         self.freq = f_org
         self.nq = nq_org
-        self._calc_parameters()
+        self.calc_parameters()
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# def _plot_dispersion(self, fmin=1, fmax=50, df=0.5):
-#     '''
-#     This function plots the modal disperssion relation.
-#     '''
-
-#     frequency = np.arange(fmin, fmax, df)
-
-#     c_phase = []
-#     k_r = []
-#     f_k_r = []
-#     for f_idx, f in enumerate(frequency):
-#         self.freq = f
-#         self._calc_parameters()
-
-#         if self._idx.size>=1:
-        
-#             for modes in range(self._idx.size-1, -1, -1):
-#                 c_phase.append(2*np.pi*f/(self.k0*self._q[self._idx[modes]]))
-#                 k_r.append(self._q[self._idx[modes]])
-#                 f_k_r.append(f)
-            
-#     k_r = np.asarray(k_r, dtype=np.float32)
-#     f_k_r = np.asarray(f_k_r, dtype=np.float32)
-#     c_phase = np.asarray(c_phase, dtype=np.float32)
-
-#     plt.figure(figsize=(5,5))
-#     plt.plot(c_phase, f_k_r, 'k.')
-#     plt.title('Dispersion relation')
-#     plt.ylabel('Frequency [Hz]')
-#     plt.xlabel('Phase velocity [m/s]')
-#     plt.show()

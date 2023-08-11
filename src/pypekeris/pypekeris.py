@@ -93,7 +93,8 @@ def pekeris_broadband(t0=3, t_max=50, fmin=1e1, fmax=1e2, dt=1e-3, zs=5, zr=5, r
         c1 = velocity layer 1, default 1500 m/s
         c2 = velocity layer 2, default 2000 m/s
     '''
-    
+
+        
     l=int(t_max/dt)
     time = np.arange(0,dt*l, dt)
 
@@ -131,12 +132,14 @@ def pekeris_broadband(t0=3, t_max=50, fmin=1e1, fmax=1e2, dt=1e-3, zs=5, zr=5, r
 
     for idx, f in enumerate(tqdm(frequency[fmin_idx:fmax_idx])):
         P = pekeris(f=f, nq=5e4, dr=1, zs=1, d=20, c1=c1, c2=c2)
-        P._calc_parameters()
-        P._calc_field(r_rec=r, z_rec=zr, num_mode=num_mode)
+        P.calc_parameters()
+        P.calc_field(r_rec=r, z_rec=zr, num_mode=num_mode)
         pressure[idx] = P.Phi*freq_ref[idx]
+    pressure[idx] = P.Phi*freq_ref[idx]
+    
         
     pressure_time = np.real(np.fft.fft(freq_ref*pressure*2))
-    T = r/P.c1
+    T = r/c1
     shift_samp = int(T/dt)
     signal = np.roll(pressure_time, shift=shift_samp)
     
@@ -146,6 +149,5 @@ def pekeris_broadband(t0=3, t_max=50, fmin=1e1, fmax=1e2, dt=1e-3, zs=5, zr=5, r
 
     
     return tr_s, tr_r
-
 
 
